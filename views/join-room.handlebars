@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .cell {
+            border: 2px solid black;
+            width: 100px;
+            height: 100px;
+            text-align: center;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    Room: {{ room }}
+    <div id="error-status"></div>
+    <div id="player-status"></div>
+    <div id="scores">
+        Scores: <br>
+        X: 0 <br>
+        O: 0
+    </div>
+    <button class="hide" id="restart">Restart</button>
+    <table id="board" class="hide">
+        <tr>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+        </tr>
+        <tr>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+        </tr>
+        <tr>
+            <td class="cell"></td>
+            <td class="cell"></td>
+            <td class="cell"></td>
+        </tr>
+    </table>
+
+    <div id="logs"></div>
+    <form id="form" class="hide">
+        <input type="text" placeholder="Chat..." id="chat-input">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        /** @type { HTMLDivElement } */ const errorStatus = document.querySelector("div#error-status");
+        /** @type { HTMLDivElement } */ const playerStatus = document.querySelector("div#player-status");
+        /** @type { HTMLDivElement } */ const scores = document.querySelector("div#scores");
+        /** @type { HTMLTableElement } */ const board = document.querySelector("#board");
+        /** @type { NodeListOf<HTMLTableCellElement> } */ const cells = document.querySelectorAll(".cell");
+        /** @type { HTMLDivElement } */ const logsElement = document.querySelector("#logs");
+        /** @type { HTMLFormElement } */ const chatForm = document.querySelector("#form");
+        /** @type { HTMLInputElement } */ const chatInput = document.querySelector("#chat-input");
+        /** @type { HTMLButtonElement } */ const restart = document.querySelector("button#restart");
+
+        /** @type { string[] } */
+        const logs = []
+
+        function connect() {
+            const websocket = new WebSocket('ws://localhost:3001');
+            websocket.onopen = function() {
+                websocket.send(JSON.stringify({
+                    type: 'join-room',
+                    payload: `{{ room }},${"{{ id }}" || localStorage.getItem("playerId") || ""}`,
+                }));
+
+                websocket.onmessage = function(ev) {
+                    const action = JSON.parse(ev.data);
+                    handleAction(action, websocket);
+                };
+
+                websocket.onclose = function() {
+                    connect();
+                };
+
+                cells.forEach(function (cell, key) {
+                    cell.addEventListener("click", function(e) {
+                        const playerId = localStorage.getItem("playerId") || "";
+                        websocket.send(JSON.stringify({
+                            type: 'make-move',
+                            payload: `{{ room }},${playerId},${key}`,
+                        }));
+                    });
+                });
+
+                chatForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const playerId = localStorage.getItem("playerId") || "";
+                    websocket.send(JSON.stringify({
+                        type: 'chat',
+                        payload: `${playerId},{{ room }},${chatInput.value}`,
+                    }));
+                    chatInput.value = "";
+                });
+            }
+        }
+        connect();
+
+        /**
+        * 
+        * @param { { type: string, payload: string } } action 
+        * @param {WebSocket} ws WebSocket conection
+        */
+        function handleAction (action, ws) {
+            switch (action.type) { 
+                case 'error':
+                    console.error(`Server error: ${action.payload}`);
+                    errorStatus.innerHTML = `Server error: ${action.payload}`
+                    break;
+
+                case 'join-success':
+                    board.classList.remove('hide');
+                    chatForm.classList.remove('hide');
+                    localStorage.setItem("playerId", action.payload);
+                    ws.send(JSON.stringify({
+                        type: 'request-board',
+                        payload: '{{ room }}',
+                    }));
+                    restart.addEventListener('click', function () {
+                        ws.send(JSON.stringify({
+                            type: 'clear-board',
+                            payload: "{{ room }}",
+                        }));
+                    });
+                    break;
+                
+                case 'update-rounds':
+                    /** @type { {X: number, O: number} } */
+                    const data = JSON.parse(action.payload);
+                    scores.innerHTML = `Scores: <br>X: ${data.X} <br>O: ${data.O}`;
+                    break;
+                
+                case 'disable-restart':
+                    restart.classList.add("hide");
+                    break;
+                
+                case 'which-player':
+                    playerStatus.innerHTML = `Player: ${action.payload}`;
+                    break;
+                
+                case 'enable-restart':
+                    restart.classList.remove("hide");
+                    break;
+                
+                case 'log':
+                    logs.push(action.payload);
+                    while (logs.length > 5)
+                        logs.shift();
+                    logsElement.innerText = logs.join("\n");
+                    break;
+
+                case 'join-failed':
+                    console.error(`Could not join room: ${action.payload}`);
+                    errorStatus.innerHTML = `Could not join room. room "${action.payload}" be full, or may not exist`;
+                    break;
+
+                case 'board-update':
+                    const b = action.payload.split(',').map((val) => val === '0' ? 'X' : (val === '1' ? 'O' : ''));
+                    cells.forEach((cell, key) => {
+                        cell.innerHTML = b[key];
+                    });
+                    break;
+
+                default:
+                    const msg = `Invalid client action: ${action.type}`;
+                    console.error(msg);
+                    ws.send(JSON.stringify({ type: 'error', payload: msg }));
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
