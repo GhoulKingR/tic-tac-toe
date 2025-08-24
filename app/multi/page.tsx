@@ -12,6 +12,8 @@ import XIcon from "@/app/assets/icon-x.svg";
 import OIcon from "@/app/assets/icon-o.svg";
 import XDark from "@/app/assets/icon-x-dark-navy.svg";
 import ODark from "@/app/assets/icon-o-dark-navy.svg";
+import OOutlineIcon from "@/app/assets/icon-o-outline.svg";
+import XOutlineIcon from "@/app/assets/icon-x-outline.svg";
 import { useRouter } from "next/navigation";
 
 enum BoardItem {
@@ -126,7 +128,7 @@ export default function Multi() {
         <Image src={Logo} alt="Logo" className="inline h-[32px]" />
         <TurnDisplay turn={turn as unknown as Mark} />
         <button
-          className="w-[40px] h-[40px] flex justify-center items-center bg-silver rounded-[5px] md:w-[52px] md:h-[52px] md:rounded-[10px]"
+          className="w-[40px] h-[40px] flex justify-center items-center bg-silver rounded-[5px] md:w-[52px] md:h-[52px] md:rounded-[10px] cursor-pointer hover:bg-silver-hover"
           style={{ boxShadow: "0 -4px 0 0 inset #6B8997" }}
           onClick={() => setShowRestart(true)}
         >
@@ -159,10 +161,16 @@ export default function Multi() {
                     alt={item === BoardItem.X ? "x" : "o"}
                   />
                 ) : (
-                  item !== BoardItem.None && (
+                  item !== BoardItem.None ? (
                     <Image
                       src={item === BoardItem.X ? XIcon : OIcon}
                       alt={item === BoardItem.X ? "x" : "o"}
+                    />
+                  ) : (
+                    <Image
+                      className="only-hover"
+                      src={turn === BoardItem.X ? XOutlineIcon : OOutlineIcon}
+                      alt="hover outline"
                     />
                   )
                 )}
@@ -334,6 +342,14 @@ const GameBoard = styled.section`
     justify-content: center;
     align-items: center;
     cursor: pointer;
+
+    .only-hover {
+      display: none;
+    }
+
+    &:hover .only-hover {
+      display: block;
+    }
 
     @media (min-width: 768px) {
       width: 140px;
