@@ -134,7 +134,6 @@ export default function Multi() {
     setWinState([]);
     setWin(false);
     setTied(false);
-    setTurn(turn);
   }
   
   function restart() {
@@ -143,7 +142,6 @@ export default function Multi() {
     setScores([0, 0, 0]);
     setWinState([]);
     setWin(false);
-    setTurn(turn);
   }
 
   return (
