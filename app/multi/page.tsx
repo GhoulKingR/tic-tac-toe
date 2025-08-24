@@ -1,5 +1,7 @@
 "use client";
 
+import "../globals.css";
+
 import Image from "next/image";
 import TurnDisplay from "@/components/TurnDisplay";
 import { useEffect, useState } from "react";
