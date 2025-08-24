@@ -125,7 +125,7 @@ export default function Multi() {
   return (
     <>
       <header className="flex justify-between mx-[24px] mt-[24px] items-center mb-[64px] md:mx-auto md:w-[460px] md:mt-[201px] md:mb-[19px] xl:mt-[130px]">
-        <Image src={Logo} alt="Logo" className="inline h-[32px]" />
+        <Image src={Logo} alt="Logo" className="inline h-[32px] cursor-pointer" onClick={() => router.push('/')}/>
         <TurnDisplay turn={turn as unknown as Mark} />
         <button
           className="w-[40px] h-[40px] flex justify-center items-center bg-silver rounded-[5px] md:w-[52px] md:h-[52px] md:rounded-[10px] cursor-pointer hover:bg-silver-hover"
