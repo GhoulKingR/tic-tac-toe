@@ -226,7 +226,7 @@ export default function Multi() {
               </p>
               <div>
                 <button
-                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-silver text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] mr-[16px]"
+                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-silver text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] mr-[16px] cursor-pointer hover:bg-silver-hover"
                   style={{ boxShadow: "0 -4px 0 0 inset #6B8997" }}
                   onClick={() => {
                     localStorage.clear();
@@ -236,7 +236,7 @@ export default function Multi() {
                   QUIT
                 </button>
                 <button
-                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-light-yellow text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px]"
+                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-light-yellow text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] cursor-pointer hover:bg-lightyellow-hover"
                   style={{ boxShadow: "0 -4px 0 0 inset #CC8B13" }}
                   onClick={() => newGame()}
                 >
@@ -259,7 +259,7 @@ export default function Multi() {
               </h1>
               <div>
                 <button
-                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-silver text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] mr-[16px]"
+                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-silver text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] mr-[16px] cursor-pointer hover:bg-silver-hover"
                   style={{ boxShadow: "0 -4px 0 0 inset #6B8997" }}
                   onClick={() => {
                     setShowRestart(false);
@@ -268,7 +268,7 @@ export default function Multi() {
                   NO, CANCEL
                 </button>
                 <button
-                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-light-yellow text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px]"
+                  className="pt-[15px] pl-[17px] pr-[16px] pb-[17px] bg-light-yellow text-[#1A2A33] font-bold text-[16px] tracking-[1px] rounded-[10px] cursor-pointer hover:bg-lightyellow-hover"
                   style={{ boxShadow: "0 -4px 0 0 inset #CC8B13" }}
                   onClick={() => {
                     restart();

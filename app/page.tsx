@@ -6,7 +6,7 @@ import MarkPicker from "@/components/MarkPicker";
 export default function Home() {
   return (
     <div className="font-outfit w-screen h-screen flex justify-center items-center">
-      <section className="w-[327px] md:w-[420px]">
+      <section className="w-[327px] md:w-[460px]">
         <Image
           src={Logo}
           alt="Logo"
